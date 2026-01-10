@@ -134,9 +134,34 @@ python server.py
 Backend runs at: `http://localhost:8000`
 
 #### Frontend Setup (New Terminal)
+
+**For WSL2 users - Use Linux npm (not Windows npm):**
+```bash
+# Install nvm (Node Version Manager)
+curl -o- https://raw.githubusercontent.com/nvm-sh/nvm/v0.39.0/install.sh | bash
+
+# Load nvm
+source ~/.nvm/nvm.sh
+
+# Install Node.js
+nvm install --lts
+nvm use node
+
+# Verify you're using Linux npm
+which npm  # Should show: /home/username/.nvm/...
+```
+
+**Install and run:**
 ```bash
 cd react-version/frontend
+
+# Use Linux npm
+source ~/.nvm/nvm.sh && nvm use node
+
+# Install dependencies
 npm install
+
+# Start development server
 npm run dev
 ```
 

@@ -163,8 +163,33 @@ python server.py
 ✅ Backend at: `http://localhost:8000`
 
 **Frontend Setup (New Terminal):**
+
+**IMPORTANT for WSL2 users:** Use Linux npm (not Windows npm) to avoid UNC path issues!
+
+```bash
+# First-time setup: Install nvm (Node Version Manager) in WSL2
+curl -o- https://raw.githubusercontent.com/nvm-sh/nvm/v0.39.0/install.sh | bash
+
+# Load nvm
+source ~/.nvm/nvm.sh
+
+# Install Node.js LTS
+nvm install --lts
+nvm use node
+
+# Verify using Linux npm (not Windows npm)
+which npm  # Should output: /home/username/.nvm/versions/node/.../bin/npm
+           # NOT: /mnt/c/Program Files/nodejs/npm
+```
+
 ```bash
 cd react-version/frontend
+
+# Load nvm (if not already in ~/.bashrc)
+source ~/.nvm/nvm.sh && nvm use node
+
+# Clean install (if previous Windows npm was used)
+rm -rf node_modules package-lock.json
 
 # Install Node.js dependencies
 npm install
@@ -174,6 +199,13 @@ npm run dev
 ```
 
 ✅ Frontend at: `http://localhost:5173`
+
+**Pro Tip:** Add to `~/.bashrc` for auto-loading:
+```bash
+echo 'source ~/.nvm/nvm.sh' >> ~/.bashrc
+echo 'nvm use node >/dev/null 2>&1' >> ~/.bashrc
+source ~/.bashrc
+```
 
 ---
 
