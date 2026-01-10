@@ -104,29 +104,49 @@ cd ollama-multimodal-llm-on-premise-real-estate-ai
 
 ## 🎯 Usage
 
-### ⚡ Quick Start (Recommended!)
+### ⚡ Quick Start
+
+#### Option 1: Docker (Easiest - Recommended!)
+
+**Prerequisites:** Docker and Docker Compose installed
 
 **Streamlit Version:**
 ```bash
 cd streamlit-version
-./start.sh
+docker-compose up
 ```
 Access at: `http://localhost:8501`
 
 **React Version:**
 ```bash
 cd react-version
-./start.sh
+docker-compose up
 ```
 Access at: `http://localhost:5173` (Backend: `http://localhost:8000`)
+
+**Stop:** Press `Ctrl+C` then run `docker-compose down`
+
+---
+
+#### Option 2: Native Startup Script
+
+**Streamlit Version:**
+```bash
+cd streamlit-version
+./start.sh
+```
+
+**React Version:**
+```bash
+cd react-version
+./start.sh
+```
 
 The startup scripts automatically handle:
 - Checking Ollama and models
 - Creating virtual environments
 - Installing dependencies
 - Starting all servers
-
-Press `Ctrl+C` to stop.
 
 ---
 
