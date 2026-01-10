@@ -18,7 +18,21 @@ react-version/
 
 ## 🚀 Setup
 
-### Backend (Terminal 1)
+### ⚡ Quick Start (One Command)
+
+```bash
+./start.sh
+```
+
+This automatically starts both backend and frontend! Access at `http://localhost:5173`
+
+Press `Ctrl+C` to stop all servers.
+
+---
+
+### 📝 Manual Setup (Two Terminals)
+
+#### Backend (Terminal 1)
 
 ```bash
 cd react-version/backend

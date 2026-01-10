@@ -63,7 +63,29 @@ ollama-multimodal-llm-on-premise-real-estate-ai/
 
 ## 🚀 Quick Start Commands
 
-### For Streamlit Version (Simplest)
+### ⚡ Option 1: One-Command Startup (Easiest!)
+
+**Streamlit Version:**
+```bash
+cd streamlit-version
+./start.sh
+```
+Opens at: `http://localhost:8501`
+
+**React Version (Backend + Frontend together):**
+```bash
+cd react-version
+./start.sh
+```
+Opens at: `http://localhost:5173` (Backend: `http://localhost:8000`)
+
+Press `Ctrl+C` to stop all servers.
+
+---
+
+### 📝 Option 2: Manual Startup (Separate Terminals)
+
+#### For Streamlit Version
 ```bash
 cd streamlit-version
 python -m venv venv
@@ -72,9 +94,9 @@ pip install -r requirements.txt
 streamlit run app.py
 ```
 
-### For React Version (Professional)
+#### For React Version
 
-**Backend:**
+**Backend (Terminal 1):**
 ```bash
 cd react-version/backend
 python -m venv venv
@@ -83,7 +105,7 @@ pip install -r requirements.txt
 python server.py
 ```
 
-**Frontend (new terminal):**
+**Frontend (Terminal 2):**
 
 **⚠️ WSL2 users: Use Linux npm (not Windows npm)**
 ```bash

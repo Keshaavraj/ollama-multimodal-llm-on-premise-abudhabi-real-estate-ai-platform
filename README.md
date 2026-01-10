@@ -104,7 +104,36 @@ cd ollama-multimodal-llm-on-premise-real-estate-ai
 
 ## 🎯 Usage
 
-### Option A: Streamlit Version (Quick Start)
+### ⚡ Quick Start (Recommended!)
+
+**Streamlit Version:**
+```bash
+cd streamlit-version
+./start.sh
+```
+Access at: `http://localhost:8501`
+
+**React Version:**
+```bash
+cd react-version
+./start.sh
+```
+Access at: `http://localhost:5173` (Backend: `http://localhost:8000`)
+
+The startup scripts automatically handle:
+- Checking Ollama and models
+- Creating virtual environments
+- Installing dependencies
+- Starting all servers
+
+Press `Ctrl+C` to stop.
+
+---
+
+### 📝 Manual Setup (Alternative)
+
+<details>
+<summary><b>Option A: Streamlit Version (Click to expand)</b></summary>
 
 Perfect for demos and testing.
 
@@ -118,11 +147,14 @@ streamlit run app.py
 
 Access at: `http://localhost:8501`
 
-### Option B: React Version (Production)
+</details>
+
+<details>
+<summary><b>Option B: React Version (Click to expand)</b></summary>
 
 Full-featured professional interface.
 
-#### Backend Setup
+#### Backend Setup (Terminal 1)
 ```bash
 cd react-version/backend
 python -m venv venv
@@ -133,7 +165,7 @@ python server.py
 
 Backend runs at: `http://localhost:8000`
 
-#### Frontend Setup (New Terminal)
+#### Frontend Setup (Terminal 2)
 
 **For WSL2 users - Use Linux npm (not Windows npm):**
 ```bash
@@ -166,6 +198,8 @@ npm run dev
 ```
 
 Frontend runs at: `http://localhost:5173`
+
+</details>
 
 ## 📊 Features Breakdown
 
