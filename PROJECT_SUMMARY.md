@@ -84,8 +84,18 @@ python server.py
 ```
 
 **Frontend (new terminal):**
+
+**⚠️ WSL2 users: Use Linux npm (not Windows npm)**
 ```bash
+# First-time setup: Install nvm
+curl -o- https://raw.githubusercontent.com/nvm-sh/nvm/v0.39.0/install.sh | bash
+source ~/.nvm/nvm.sh
+nvm install --lts
+nvm use node
+
+# Run frontend
 cd react-version/frontend
+source ~/.nvm/nvm.sh && nvm use node
 npm install
 npm run dev
 ```
@@ -115,13 +125,20 @@ Save to `assets/screenshots/` and add to README
 
 ```bash
 # Test Streamlit version
-cd streamlit-version && streamlit run app.py
+cd streamlit-version
+source venv/bin/activate
+streamlit run app.py
 
 # Test React version
-# Terminal 1:
-cd react-version/backend && python server.py
-# Terminal 2:
-cd react-version/frontend && npm run dev
+# Terminal 1 - Backend:
+cd react-version/backend
+source venv/bin/activate
+python server.py
+
+# Terminal 2 - Frontend (WSL2: use Linux npm):
+cd react-version/frontend
+source ~/.nvm/nvm.sh && nvm use node
+npm run dev
 ```
 
 ### 4. Commit and Push
