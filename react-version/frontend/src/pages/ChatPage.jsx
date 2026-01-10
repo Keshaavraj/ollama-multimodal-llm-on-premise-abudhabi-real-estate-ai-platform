@@ -13,7 +13,7 @@ function ChatPage() {
   const [selectedImage, setSelectedImage] = useState(null);
   const [isLoading, setIsLoading] = useState(false);
   const [voiceEnabled, setVoiceEnabled] = useState(true);
-  const [voiceSpeed, setVoiceSpeed] = useState(1.0);
+  const [voiceSpeed, setVoiceSpeed] = useState(1.4);
   const [metrics, setMetrics] = useState({
     lastResponseTime: 0,
     avgResponseTime: 0,
