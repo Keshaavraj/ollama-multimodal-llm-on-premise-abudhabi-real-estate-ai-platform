@@ -1,4 +1,4 @@
-<<<<<<< HEAD
+
 # 🏠 Ollama Multimodal LLM On-Premise Real Estate AI Platform
 
 > Production-ready Abu Dhabi real estate assistant powered by **Llama 3.1 8B** & **LLaVA 7B** vision models with FastAPI backend and React frontend
