@@ -9,6 +9,25 @@
 [![FastAPI](https://img.shields.io/badge/FastAPI-Backend-009688)](https://fastapi.tiangolo.com/)
 [![React](https://img.shields.io/badge/React-Frontend-61DAFB)](https://react.dev/)
 
+## ⚠️ Important Disclaimers
+
+**Deployment Status:**
+- This application runs **locally on-premise** using Ollama runtime
+- **NOT deployed live** - designed as a technical demonstration and portfolio showcase
+- Architecture is cloud-deployment ready but currently configured for local execution only
+
+**AI Model Limitations:**
+- **Llama 3.1 8B**: Training data cutoff (April 2023) - does not include recent Abu Dhabi real estate market data
+- **LLaVA 7B**: Vision model trained on general images - property analysis is based on visual patterns, not real market data
+- Responses are AI-generated and should **NOT be used for actual real estate decisions**
+- **No live data integration** - currently uses model knowledge only, not connected to real property databases
+
+**Planned Future Enhancements:**
+- 🔄 **Live API Integration**: Connect to real estate APIs (Bayut, Property Finder, Dubizzle)
+- 🤖 **MCP Support**: Model Context Protocol for advanced context management
+- ☁️ **Cloud Deployment**: AWS/Azure deployment with production-grade infrastructure
+- 📊 **Real-time Market Data**: Live property listings, pricing, and availability
+
 ## 🌟 Overview
 
 An enterprise-grade multimodal AI platform for real estate property search and analysis. Features **dual LLM models** (text + vision), **voice synthesis**, **real-time performance metrics**, and a professional government-themed UI.
