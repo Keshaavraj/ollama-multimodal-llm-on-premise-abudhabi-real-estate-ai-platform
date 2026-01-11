@@ -50,9 +50,9 @@ An enterprise-grade multimodal AI platform for real estate property search and a
 
 <div align="center">
 
-#### Hero Landing Page
-![React Landing Hero](assets/screenshots/01-react-landing-hero.png)
-*Modern landing page with animated neural network background, showcasing dual AI models with <2s average response time*
+#### Landing Page
+![React Landing Page](assets/screenshots/01-react-landing-hero.png)
+*Modern interface with animated neural network background, showcasing dual AI models with <2s average response time*
 
 #### Features Overview
 ![Features Showcase](assets/screenshots/02-react-features-showcase.png)
