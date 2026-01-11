@@ -42,6 +42,48 @@ An enterprise-grade multimodal AI platform for real estate property search and a
 - 🔒 **On-Premise**: Fully local deployment with Ollama
 - ⚡ **High Performance**: Optimized inference with concurrent request handling
 
+---
+
+## 📸 Screenshots
+
+### React Version - Professional Interface
+
+<div align="center">
+
+#### Hero Landing Page
+![React Landing Hero](assets/screenshots/01-react-landing-hero.png)
+*Modern landing page with animated neural network background, showcasing dual AI models with <2s average response time*
+
+#### Features Overview
+![Features Showcase](assets/screenshots/02-react-features-showcase.png)
+*Comprehensive feature set: AI-powered assistant, image analysis, voice integration, real-time processing, and analytics dashboard*
+
+#### Technology Stack
+![Tech Stack](assets/screenshots/03-react-tech-stack.png)
+*Built with cutting-edge technologies: Llama 3.1 8B, LLaVA 7B, FastAPI, React + Vite, and on-premise Ollama deployment*
+
+#### Chat Interface
+![Chat Interface](assets/screenshots/04-react-chat-interface.png)
+*Clean chat UI with performance metrics sidebar showing response times, token usage, active models, voice controls, and image upload capabilities*
+
+#### Multimodal AI Analysis
+![Multimodal Analysis](assets/screenshots/05-react-multimodal-analysis.png)
+*Real-world demonstration: Investment analysis with text responses + property image analysis using dual LLM models (Llama 3.1 + LLaVA), with voice playback controls*
+
+</div>
+
+### Streamlit Version - Rapid Prototyping Interface
+
+<div align="center">
+
+#### Voice & Image Integration
+![Streamlit Demo](assets/screenshots/06-streamlit-voice-image-demo.png)
+*Streamlit version showcasing image upload, live voice recording, audio file upload, and text-to-speech with adjustable voice speed*
+
+</div>
+
+---
+
 ## 🏗️ Architecture
 
 ```
