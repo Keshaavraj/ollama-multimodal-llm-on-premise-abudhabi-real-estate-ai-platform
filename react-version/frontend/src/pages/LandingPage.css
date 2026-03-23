@@ -258,6 +258,12 @@
   animation-delay: 1s;
 }
 
+.card-4 {
+  top: 5%;
+  right: 35%;
+  animation-delay: 1.5s;
+}
+
 @keyframes float {
   0%, 100% {
     transform: translateY(0);

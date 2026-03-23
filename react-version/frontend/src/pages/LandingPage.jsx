@@ -1,6 +1,6 @@
 import React from 'react';
 import { useNavigate } from 'react-router-dom';
-import { FaRobot, FaImage, FaMicrophone, FaBolt, FaChartLine, FaServer } from 'react-icons/fa';
+import { FaRobot, FaImage, FaMicrophone, FaBolt, FaChartLine, FaServer, FaGlobe } from 'react-icons/fa';
 import './LandingPage.css';
 
 function LandingPage() {
@@ -36,6 +36,11 @@ function LandingPage() {
       icon: <FaServer size={40} />,
       title: 'On-Premise Models',
       description: 'Fully local Ollama deployment with FastAPI backend'
+    },
+    {
+      icon: <FaGlobe size={40} />,
+      title: 'Live Market Data',
+      description: 'MCP server fetches real listings & rental prices from PropertyFinder.ae — no API key needed'
     }
   ];
 
@@ -44,7 +49,8 @@ function LandingPage() {
     { name: 'LLaVA 7B', type: 'Vision Model' },
     { name: 'FastAPI', type: 'Backend' },
     { name: 'React + Vite', type: 'Frontend' },
-    { name: 'Ollama', type: 'LLM Runtime' }
+    { name: 'Ollama', type: 'LLM Runtime' },
+    { name: 'MCP Server', type: 'Live Data' }
   ];
 
   return (
@@ -53,7 +59,7 @@ function LandingPage() {
         <div className="hero-content">
           <div className="hero-badge">
             <span className="badge-dot"></span>
-            Powered by Local LLMs
+            Powered by Local LLMs &amp; Live Market Data
           </div>
           <h1 className="hero-title">
             Abu Dhabi Real Estate
@@ -89,6 +95,10 @@ function LandingPage() {
               <div className="stat-value">100%</div>
               <div className="stat-label">Local Processing</div>
             </div>
+            <div className="stat-item">
+              <div className="stat-value">Live</div>
+              <div className="stat-label">Market Data</div>
+            </div>
           </div>
         </div>
 
@@ -104,6 +114,10 @@ function LandingPage() {
           <div className="floating-card card-3">
             <div className="card-icon">📊</div>
             <div className="card-text">Real-time Metrics</div>
+          </div>
+          <div className="floating-card card-4">
+            <div className="card-icon">🌐</div>
+            <div className="card-text">Live Listings</div>
           </div>
         </div>
       </div>
@@ -152,7 +166,7 @@ function LandingPage() {
       </section>
 
       <footer className="landing-footer">
-        <p>Built with React, Vite, FastAPI, and Ollama • On-Premise LLM Deployment</p>
+        <p>Built with React, Vite, FastAPI, Ollama &amp; MCP Server • On-Premise LLM + Live Market Data</p>
       </footer>
     </div>
   );

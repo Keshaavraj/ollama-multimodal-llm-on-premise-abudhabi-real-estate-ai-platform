@@ -8,6 +8,7 @@
 [![LLaVA](https://img.shields.io/badge/LLaVA-7B-orange)](https://llava-vl.github.io/)
 [![FastAPI](https://img.shields.io/badge/FastAPI-Backend-009688)](https://fastapi.tiangolo.com/)
 [![React](https://img.shields.io/badge/React-Frontend-61DAFB)](https://react.dev/)
+[![MCP](https://img.shields.io/badge/MCP-Live%20Data-purple)](https://modelcontextprotocol.io/)
 
 ## ⚠️ Important Disclaimers
 
@@ -20,13 +21,15 @@
 - **Llama 3.1 8B**: Training data cutoff (April 2023) - does not include recent Abu Dhabi real estate market data
 - **LLaVA 7B**: Vision model trained on general images - property analysis is based on visual patterns, not real market data
 - Responses are AI-generated and should **NOT be used for actual real estate decisions**
-- **No live data integration** - currently uses model knowledge only, not connected to real property databases
+
+**Live Data — MCP Server (Now Available!):**
+- ✅ **MCP Server built** — connects to [PropertyFinder.ae](https://www.propertyfinder.ae) and [Numbeo](https://www.numbeo.com) for live prices
+- ✅ **No API key required** — scrapes live data directly, 100% free
+- See the [MCP Server setup](#-mcp-server--live-real-estate-data) section below
 
 **Planned Future Enhancements:**
-- 🔄 **Live API Integration**: Connect to real estate APIs (Bayut, Property Finder, Dubizzle)
-- 🤖 **MCP Support**: Model Context Protocol for advanced context management
 - ☁️ **Cloud Deployment**: AWS/Azure deployment with production-grade infrastructure
-- 📊 **Real-time Market Data**: Live property listings, pricing, and availability
+- 🔗 **Backend Integration**: Wire MCP data directly into the FastAPI chat endpoint
 
 ## 🌟 Overview
 
@@ -41,6 +44,7 @@ An enterprise-grade multimodal AI platform for real estate property search and a
 - 🏛️ **Professional UI**: Government-themed design with animated backgrounds
 - 🔒 **On-Premise**: Fully local deployment with Ollama
 - ⚡ **High Performance**: Optimized inference with concurrent request handling
+- 🌐 **Live Market Data**: MCP server fetches real listings & rental prices from PropertyFinder.ae
 
 ---
 
@@ -111,6 +115,17 @@ An enterprise-grade multimodal AI platform for real estate property search and a
     │   - Llama 3.1 8B     │
     │   - LLaVA 7B         │
     └──────────────────────┘
+
+    ┌──────────────────────┐      ┌──────────────────────┐
+    │   MCP Server         │─────▶│  PropertyFinder.ae   │
+    │   - Live Listings    │      │  (live property data)│
+    │   - Rental Prices    │      └──────────────────────┘
+    │   - Market Overview  │
+    └──────────────────────┘      ┌──────────────────────┐
+              │                   │  Numbeo.com          │
+              └──────────────────▶│  (rent price index)  │
+                                  └──────────────────────┘
+    Used via Claude Desktop / any MCP-compatible client
 ```
 
 ## 🚀 Quick Start
@@ -346,6 +361,11 @@ Frontend runs at: `http://localhost:5173`
 │       │   └── components/
 │       └── package.json
 │
+├── mcp-server/              # MCP Server – Live Real Estate Data
+│   ├── server.py           # MCP server (6 tools, no API key needed)
+│   ├── requirements.txt    # mcp + httpx
+│   └── README.md          # MCP setup & Claude Desktop config
+│
 ├── docs/                   # Documentation
 │   ├── INSTALLATION.md    # Detailed setup guide
 │   ├── ARCHITECTURE.md    # System design
@@ -354,6 +374,53 @@ Frontend runs at: `http://localhost:5173`
 └── assets/               # Media files
     └── screenshots/     # UI screenshots
 ```
+
+---
+
+## 🌐 MCP Server — Live Real Estate Data
+
+The `mcp-server/` directory contains a **Model Context Protocol server** that gives Claude (or any MCP-compatible AI client) access to live UAE property data. **No API key or payment required.**
+
+### What it fetches live
+
+| Tool | Data source | What it returns |
+|---|---|---|
+| `search_properties_for_rent` | PropertyFinder.ae | Live rental listings |
+| `search_properties_for_sale` | PropertyFinder.ae | Live sale listings |
+| `get_rental_prices` | PropertyFinder.ae | Min/avg/max rent per bedroom count |
+| `get_property_details` | PropertyFinder.ae | Full listing details |
+| `search_locations` | PropertyFinder.ae | Location IDs for communities |
+| `get_market_overview` | Numbeo.com | Monthly rent & price-per-sqm |
+
+### Quick setup
+
+```bash
+cd mcp-server
+python3 -m venv venv
+source venv/bin/activate
+pip install -r requirements.txt
+```
+
+### Connect to Claude Desktop
+
+Add to `~/.config/Claude/claude_desktop_config.json` (Linux/WSL2):
+
+```json
+{
+  "mcpServers": {
+    "real-estate": {
+      "command": "/home/<your-username>/Ollama_Project/mcp-server/venv/bin/python3",
+      "args": ["/home/<your-username>/Ollama_Project/mcp-server/server.py"]
+    }
+  }
+}
+```
+
+Then ask Claude: *"What are the average rental prices for 2-bedroom apartments in Abu Dhabi right now?"*
+
+> See [`mcp-server/README.md`](mcp-server/README.md) for full docs.
+
+---
 
 ## 🛠️ Technology Stack
 
@@ -376,6 +443,13 @@ Frontend runs at: `http://localhost:5173`
 ### Frontend (Streamlit Version)
 - **Framework**: Streamlit 1.31+
 - **UI Components**: Native Streamlit widgets
+
+### MCP Server
+- **Protocol**: Model Context Protocol (MCP)
+- **Library**: `mcp[cli]` (official Python SDK)
+- **HTTP Client**: httpx (async)
+- **Data Sources**: PropertyFinder.ae (web scraping), Numbeo.com
+- **Auth**: None required — 100% free
 
 ## 🎨 UI Features
 

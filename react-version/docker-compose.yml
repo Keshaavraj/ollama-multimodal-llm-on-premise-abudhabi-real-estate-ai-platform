@@ -43,6 +43,29 @@ services:
     networks:
       - real-estate-network
 
+  # MCP Server - Live Real Estate Data (PropertyFinder.ae + Numbeo)
+  # No API key required — scrapes live data directly
+  mcp-server:
+    build:
+      context: ../mcp-server
+      dockerfile: Dockerfile
+    container_name: real-estate-mcp
+    ports:
+      - "8080:8080"
+    environment:
+      - MCP_TRANSPORT=streamable-http
+      - MCP_HOST=0.0.0.0
+      - MCP_PORT=8080
+    restart: unless-stopped
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8080/mcp"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 15s
+    networks:
+      - real-estate-network
+
 networks:
   real-estate-network:
     driver: bridge

@@ -1,6 +1,7 @@
 from fastapi import FastAPI, UploadFile, File, Form
 from fastapi.middleware.cors import CORSMiddleware
-from fastapi.responses import FileResponse
+from fastapi.responses import FileResponse, StreamingResponse
+import json
 import ollama
 from gtts import gTTS
 import speech_recognition as sr
@@ -23,42 +24,62 @@ app.add_middleware(
 
 @app.post("/api/chat")
 async def chat(message: str = Form(...)):
-    """Handle text chat"""
-    try:
-        response = ollama.chat(
-            model='llama3.1:8b',
-            messages=[
-                {'role': 'system', 'content': 'You are a professional Abu Dhabi real estate assistant helping with property searches, prices, locations, and advice.'},
-                {'role': 'user', 'content': message}
-            ]
-        )
-        return {"response": response['message']['content']}
-    except Exception as e:
-        return {"error": str(e)}
+    """Handle text chat with SSE streaming"""
+    def generate():
+        try:
+            stream = ollama.chat(
+                model='llama3.1:8b',
+                messages=[
+                    {'role': 'system', 'content': 'You are a professional Abu Dhabi real estate assistant helping with property searches, prices, locations, and advice.'},
+                    {'role': 'user', 'content': message}
+                ],
+                stream=True
+            )
+            for chunk in stream:
+                token = chunk['message']['content']
+                yield f"data: {json.dumps({'token': token})}\n\n"
+        except Exception as e:
+            yield f"data: {json.dumps({'error': str(e)})}\n\n"
+        yield "data: [DONE]\n\n"
+
+    return StreamingResponse(generate(), media_type="text/event-stream")
 
 @app.post("/api/chat-with-image")
 async def chat_with_image(
     message: str = Form(...),
     image: UploadFile = File(...)
 ):
-    """Handle chat with image analysis"""
-    try:
-        # Read and process image
-        img_bytes = await image.read()
+    """Handle chat with image analysis — resized + SSE streaming"""
+    img_bytes = await image.read()
 
-        response = ollama.chat(
-            model='llava:7b',
-            messages=[
-                {
-                    'role': 'user',
-                    'content': f'You are a professional Abu Dhabi real estate assistant. Analyze this property image and answer: {message}',
-                    'images': [img_bytes]
-                }
-            ]
-        )
-        return {"response": response['message']['content']}
-    except Exception as e:
-        return {"error": str(e)}
+    # Resize to max 512px to speed up LLaVA processing
+    img = Image.open(BytesIO(img_bytes))
+    img.thumbnail((512, 512), Image.LANCZOS)
+    buf = BytesIO()
+    img.save(buf, format='JPEG', quality=85)
+    img_bytes = buf.getvalue()
+
+    def generate():
+        try:
+            stream = ollama.chat(
+                model='llava:7b',
+                messages=[
+                    {
+                        'role': 'user',
+                        'content': f'You are a professional Abu Dhabi real estate assistant. Analyze this property image and answer: {message}',
+                        'images': [img_bytes]
+                    }
+                ],
+                stream=True
+            )
+            for chunk in stream:
+                token = chunk['message']['content']
+                yield f"data: {json.dumps({'token': token})}\n\n"
+        except Exception as e:
+            yield f"data: {json.dumps({'error': str(e)})}\n\n"
+        yield "data: [DONE]\n\n"
+
+    return StreamingResponse(generate(), media_type="text/event-stream")
 
 @app.post("/api/transcribe")
 async def transcribe_audio(audio: UploadFile = File(...)):

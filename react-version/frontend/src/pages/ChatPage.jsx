@@ -47,6 +47,51 @@ function ChatPage() {
     }
   };
 
+  // Resize image to max 512px before upload to speed up LLaVA
+  const resizeImage = (file, maxPx = 512) => new Promise((resolve) => {
+    const img = document.createElement('img');
+    const url = URL.createObjectURL(file);
+    img.onload = () => {
+      const scale = Math.min(maxPx / img.width, maxPx / img.height, 1);
+      const canvas = document.createElement('canvas');
+      canvas.width = Math.round(img.width * scale);
+      canvas.height = Math.round(img.height * scale);
+      canvas.getContext('2d').drawImage(img, 0, 0, canvas.width, canvas.height);
+      URL.revokeObjectURL(url);
+      canvas.toBlob(resolve, 'image/jpeg', 0.85);
+    };
+    img.src = url;
+  });
+
+  // Consume an SSE stream and call onToken for each token; returns full content
+  const readSSEStream = async (response, onToken) => {
+    const reader = response.body.getReader();
+    const decoder = new TextDecoder();
+    let buffer = '';
+    let fullContent = '';
+
+    while (true) {
+      const { done, value } = await reader.read();
+      if (done) break;
+      buffer += decoder.decode(value, { stream: true });
+      const lines = buffer.split('\n');
+      buffer = lines.pop();
+      for (const line of lines) {
+        if (!line.startsWith('data: ')) continue;
+        const data = line.slice(6).trim();
+        if (data === '[DONE]') break;
+        try {
+          const parsed = JSON.parse(data);
+          if (parsed.token) {
+            fullContent += parsed.token;
+            onToken(fullContent);
+          }
+        } catch (_) {}
+      }
+    }
+    return fullContent;
+  };
+
   const handleSendMessage = async () => {
     if (!inputText.trim() && !selectedImage) return;
     if (isLoading) return;
@@ -73,39 +118,55 @@ function ChatPage() {
     const startTime = Date.now();
 
     try {
-      let response;
+      let fullContent = '';
+
+      // Add empty assistant message — works for both text and image
+      setMessages(prev => [...prev, { role: 'assistant', content: '' }]);
+
+      const onToken = (content) => {
+        setMessages(prev => {
+          const updated = [...prev];
+          updated[updated.length - 1] = { role: 'assistant', content };
+          return updated;
+        });
+      };
 
       if (messageImage) {
+        // Resize image before upload, then stream
+        const resized = await resizeImage(messageImage);
         const formData = new FormData();
         formData.append('message', messageText || 'Describe this property');
-        formData.append('image', messageImage);
+        formData.append('image', resized, 'image.jpg');
 
-        response = await axios.post(`${API_BASE}/api/chat-with-image`, formData, {
-          headers: { 'Content-Type': 'multipart/form-data' },
+        const response = await fetch(`${API_BASE}/api/chat-with-image`, {
+          method: 'POST',
+          body: formData,
           signal: abortControllerRef.current.signal
         });
+        if (!response.ok) throw new Error(`HTTP ${response.status}`);
+        fullContent = await readSSEStream(response, onToken);
       } else {
+        // Text chat — SSE streaming
         const formData = new FormData();
         formData.append('message', messageText);
 
-        response = await axios.post(`${API_BASE}/api/chat`, formData, {
+        const response = await fetch(`${API_BASE}/api/chat`, {
+          method: 'POST',
+          body: formData,
           signal: abortControllerRef.current.signal
         });
+        if (!response.ok) throw new Error(`HTTP ${response.status}`);
+        fullContent = await readSSEStream(response, onToken);
       }
 
       const endTime = Date.now();
       const responseTime = (endTime - startTime) / 1000;
-
-      const botMessage = {
-        role: 'assistant',
-        content: response.data.response,
-        responseTime: responseTime
-      };
-
-      setMessages(prev => [...prev, botMessage]);
-
-      // Update metrics
-      const tokenEstimate = response.data.response.split(' ').length * 1.3;
+      setMessages(prev => {
+        const updated = [...prev];
+        updated[updated.length - 1] = { role: 'assistant', content: fullContent, responseTime };
+        return updated;
+      });
+      const tokenEstimate = fullContent.split(' ').length * 1.3;
       setMetrics(prev => ({
         lastResponseTime: responseTime,
         avgResponseTime: ((prev.avgResponseTime * prev.messagesCount) + responseTime) / (prev.messagesCount + 1),
@@ -113,28 +174,27 @@ function ChatPage() {
         messagesCount: prev.messagesCount + 1
       }));
 
-      // Text to speech
-      if (voiceEnabled) {
+      // Unblock UI before TTS
+      setIsLoading(false);
+
+      // Text to speech (non-blocking)
+      if (voiceEnabled && fullContent) {
         try {
           const ttsFormData = new FormData();
-          ttsFormData.append('text', response.data.response);
+          ttsFormData.append('text', fullContent);
           const ttsResponse = await axios.post(`${API_BASE}/api/text-to-speech`, ttsFormData);
 
           const audio = new Audio(`${API_BASE}${ttsResponse.data.audio_url}`);
           audio.playbackRate = voiceSpeed;
           currentAudioRef.current = audio;
-
-          audio.onended = () => {
-            currentAudioRef.current = null;
-          };
-
+          audio.onended = () => { currentAudioRef.current = null; };
           audio.play().catch(err => console.error('Audio play error:', err));
         } catch (ttsError) {
           console.error('TTS Error:', ttsError);
         }
       }
     } catch (error) {
-      if (error.name === 'CanceledError' || error.code === 'ERR_CANCELED') {
+      if (error.name === 'AbortError' || error.name === 'CanceledError' || error.code === 'ERR_CANCELED') {
         console.log('Request canceled');
         return;
       }
